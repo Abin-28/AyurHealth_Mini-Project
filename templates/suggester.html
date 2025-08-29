@@ -90,7 +90,7 @@
 
 
     <!-- Suggester -->
-    <form action="{{ url_for('s2')}}" method="post">
+    <form action="{{ url_for('s2')}}#sresult" method="post">
       <div id="ssfill" >
         <div  for = "num" class="inputBox">
           <input list="scripts" type = 'text' id = 'nam', name = 'n section', required = 'required'>
@@ -109,9 +109,11 @@
     <br></br>
     
     <!-- Results -->
+    {% if results %}
     <div id="sresult" class="container">
       <p id="table">{{results}}</p>
     </div>
+    {% endif %}
   </div> 
 
   <!-- End of Suggester Page -->
@@ -150,6 +152,7 @@
   <!-- jQuery (Bootstrap JS plugins depend on it) -->
   <script src="{{ url_for('static',filename='js/jquery-2.1.4.min.js') }}"></script>
   <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/suggester.js') }}"></script>
   
 </body>
 </html>
