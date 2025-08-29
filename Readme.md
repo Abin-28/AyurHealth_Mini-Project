@@ -29,7 +29,7 @@ source .venv/bin/activate    # macOS/Linux
 pip install -r requirements.txt
 ```
 
-### c. Start the app (binds to http://localhost:3000)
+### c. Start the app
 ```bash
 python AyurHealth.py
 ```
