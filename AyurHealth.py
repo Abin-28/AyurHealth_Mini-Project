@@ -68,8 +68,11 @@ def s2():
 
 
 # For running the page again and again without restarting
+# ... existing code ...
+
 if __name__ == "__main__":
-	import os
-	port = int(os.environ.get('PORT', 3000))
-	host = os.environ.get('HOST', 'localhost')
-	app.run(host=host, port=port, debug=True)
+    import os
+    port = int(os.environ.get('PORT', 3000))
+    # Force host to 0.0.0.0 for Render deployment
+    host = '0.0.0.0' if os.environ.get('PORT') else 'localhost'
+    app.run(host=host, port=port, debug=True)
