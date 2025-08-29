@@ -68,7 +68,6 @@ def s2():
 
 
 # For running the page again and again without restarting
-# ... existing code ...
 
 if __name__ == "__main__":
     import os
