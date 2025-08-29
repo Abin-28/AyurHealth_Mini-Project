@@ -108,7 +108,7 @@
 
 
     <!-- Symptoms -->
-    <form action="{{ url_for('s1')}}" method="post">
+    <form action="{{ url_for('s1')}}#result" method="post">
     <div id="sfill">
       <div  for = "snum" class="inputBox">
         <input list="scripts" type = 'text' id = 'fnam', name = 'fn section', required = 'required'>
@@ -142,9 +142,11 @@
     <br></br>
 
     <!-- Result -->
+    {% if results %}
     <div id="result" class="container">
       <h3>{{results}}</h3>
     </div>
+    {% endif %}
   </div>
   <!-- End of Symptom Page -->
 
@@ -182,7 +184,7 @@
   <!-- jQuery (Bootstrap JS plugins depend on it) -->
   <script src="{{ url_for('static',filename='js/jquery-2.1.4.min.js') }}"></script>
   <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static',filename='js/script.js') }}"></script>
-  
+  <script src="{{ url_for('static',filename='js/symptoms.js') }}"></script>
+
 </body>
 </html>
