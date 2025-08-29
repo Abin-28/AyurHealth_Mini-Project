@@ -1,7 +1,15 @@
 import sqlite3
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
+
+#importing the libraries for the machine learning models
+from sklearn.ensemble import RandomForestClassifier #Random Forest Classifier
+from sklearn.svm import SVC #Support Vector Classifier
+from sklearn.linear_model import LogisticRegression #Logistic Regression
+from sklearn.naive_bayes import GaussianNB #Gaussian Naive Bayes
+
+#importing the library for the accuracy score
+from sklearn.metrics import accuracy_score
 
 def Symptoms(a, b, c, d):
     # List of symptoms and diseases
@@ -42,46 +50,78 @@ def Symptoms(a, b, c, d):
 
     # Read the training data
     df_train = pd.read_csv("Training.csv")
-    df_train.replace({'prognosis': {disease[i]: i for i in range(len(disease))}}, inplace=True)
+    prognosis_mapping = {disease[i]: i for i in range(len(disease))}
+    df_train['prognosis'] = df_train['prognosis'].map(prognosis_mapping).astype(int)
     
     # Prepare X_train and y_train
     X_train = df_train[l1]
     y_train = df_train['prognosis']
 
-    # Initialize and train the model
-    clf = RandomForestClassifier(n_estimators=100, random_state=42)
-    clf.fit(X_train, y_train)
+    # Initialize candidate models
+    candidate_models = {
+        'RandomForest': RandomForestClassifier(n_estimators=200, random_state=42),
+        'SVC': SVC(kernel='rbf', probability=True, random_state=42),
+        'LogisticRegression': LogisticRegression(max_iter=1000, n_jobs=None, random_state=42),
+        'GaussianNB': GaussianNB()
+    }
+
+    # Read the testing data and prepare test sets
+    df_test = pd.read_csv("Testing.csv")
+    df_test['prognosis'] = df_test['prognosis'].map(prognosis_mapping).astype(int)
+    X_test = df_test[l1]
+    y_test = df_test['prognosis']
+
+    # Train, evaluate and select best model by accuracy on Testing.csv
+    model_name_to_accuracy = {}
+    best_model_name = None
+    best_model = None
+    best_accuracy = -1.0
+
+    for name, model in candidate_models.items():
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        acc = accuracy_score(y_test, y_pred)
+        model_name_to_accuracy[name] = acc
+        if acc > best_accuracy:
+            best_accuracy = acc
+            best_model_name = name
+            best_model = model
+
+    # Log per-model accuracies
+    print("--------------------------------")
+    print("Model accuracies:")
+    for name, acc in model_name_to_accuracy.items():
+        print(f"  - {name}: {acc:.4f}")
 
     # Prepare input data
     input_data = np.zeros(len(l1))
     for symptom in [a, b, c, d]:
         input_data[l1.index(symptom)] = 1
 
-    # Predict disease
-    predicted_index = clf.predict([input_data])[0]
+    # Predict disease using the best model (with feature names to avoid sklearn warnings)
+    input_df = pd.DataFrame([input_data], columns=l1)
+    predicted_index = best_model.predict(input_df)[0]
     predicted_disease = disease[predicted_index]
+
+    # Log inputs and prediction
+    print("Input symptoms:", "Symptom 1:", a, "Symptom 2:", b, "Symptom 3:", c, "Symptom 4:", d)
+    print("Predicted disease:", predicted_disease)
 
     # Store prediction in database
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS SymptomPrediction (Symptom1 TEXT, Symptom2 TEXT, Symptom3 TEXT, Symptom4 TEXT, PredictedDisease TEXT)")
-    cursor.execute("INSERT INTO SymptomPrediction (Symptom1, Symptom2, Symptom3, Symptom4, PredictedDisease) VALUES (?, ?, ?, ?, ?)", (a, b, c, d, predicted_disease))
-    conn.commit()
-    conn.close()
+    try:
+        cursor.execute("INSERT INTO SymptomPrediction (Symptom1, Symptom2, Symptom3, Symptom4, PredictedDisease) VALUES (?, ?, ?, ?, ?)", (a, b, c, d, predicted_disease))
+        conn.commit()
+        print("DB insert status: success")
+    except Exception as db_err:
+        print("DB insert status: failed", db_err)
+    finally:
+        conn.close()
 
-    # Read the testing data
-    df_test = pd.read_csv("Testing.csv")
-    df_test.replace({'prognosis': {disease[i]: i for i in range(len(disease))}}, inplace=True)
-
-    # Prepare X_test and y_test
-    X_test = df_test[l1]
-    y_test = df_test['prognosis']
-
-    # Make predictions using the model
-    y_pred = clf.predict(X_test)
-
-    # Check accuracy of predictions
-    accuracy = sum(y_pred == y_test) / len(y_test)
-    print("Model Accuracy:", accuracy)
+    # Log best model and its accuracy
+    print("Selected model:", best_model_name, "Accuracy:", best_accuracy)
+    print("--------------------------------")
 
     return predicted_disease
