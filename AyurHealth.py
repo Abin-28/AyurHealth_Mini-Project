@@ -69,4 +69,7 @@ def s2():
 
 # For running the page again and again without restarting
 if __name__ == "__main__":
-	app.run(host='localhost', port=3000, debug=True)
+	import os
+	port = int(os.environ.get('PORT', 3000))
+	host = os.environ.get('HOST', 'localhost')
+	app.run(host=host, port=port, debug=True)
