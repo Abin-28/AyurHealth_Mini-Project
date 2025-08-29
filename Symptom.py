@@ -68,7 +68,8 @@ def Symptoms(a, b, c, d):
 
     # Only train models if they haven't been trained yet
     if _trained_models is None:
-        print("Training models for the first time...")
+        print("🧠 COMPUTER'S BRAIN: Empty! Need to train models...")
+        print("📚 Reading training data from CSV files...")
         
         # Read the training data
         df_train = pd.read_csv("Training.csv")
@@ -78,6 +79,8 @@ def Symptoms(a, b, c, d):
         # Prepare X_train and y_train
         X_train = df_train[l1]
         y_train = df_train['prognosis']
+
+        print(f"📊 Training data loaded: {len(df_train)} rows, {len(l1)} symptoms, {len(disease)} diseases")
 
         # Initialize candidate models (optimized for speed)
         candidate_models = {
@@ -93,16 +96,19 @@ def Symptoms(a, b, c, d):
         X_test = df_test[l1]
         y_test = df_test['prognosis']
 
+        print(f"🧪 Testing data loaded: {len(df_test)} rows")
+
         # Train, evaluate and select best model by accuracy on Testing.csv
         model_name_to_accuracy = {}
         best_model_name = None
         best_model = None
         best_accuracy = -1.0
 
+        print("🚀 Starting model training...")
         # For free tier, train models one by one and check if we're running out of time
         for name, model in candidate_models.items():
             try:
-                print(f"Training {name}...")
+                print(f"🎯 Training {name}...")
                 model.fit(X_train, y_train)
                 y_pred = model.predict(X_test)
                 acc = accuracy_score(y_test, y_pred)
@@ -112,13 +118,15 @@ def Symptoms(a, b, c, d):
                     best_model_name = name
                     best_model = model
                 
-                # If we have a decent model, use it (don't wait for all models)
-                if best_accuracy > 0.8:  # 80% accuracy threshold
-                    print(f"Good enough model found: {best_model_name} ({best_accuracy:.4f})")
-                    break
+                print(f"✅ {name} trained! Accuracy: {acc:.4f}")
+                
+                # Train all models to see which is best (remove early stopping)
+                # if best_accuracy > 0.8:  # 80% accuracy threshold
+                #     print(f"🎉 Good enough model found: {best_model_name} ({best_accuracy:.4f})")
+                #     break
                     
             except Exception as e:
-                print(f"Error training {name}: {e}")
+                print(f"❌ Error training {name}: {e}")
                 continue
 
         # Store globally for reuse
@@ -127,47 +135,88 @@ def Symptoms(a, b, c, d):
         _best_model_name = best_model_name
         _best_accuracy = best_accuracy
         
+        print("🧠 COMPUTER'S BRAIN: Models stored successfully!")
         print("--------------------------------")
-        print("Model accuracies:")
+        print("📈 MODEL ACCURACIES:")
         for name, acc in model_name_to_accuracy.items():
             print(f"  - {name}: {acc:.4f}")
+        print(f"🏆 BEST MODEL: {_best_model_name} (Accuracy: {_best_accuracy:.4f})")
         print("--------------------------------")
+        
+        # Show what's stored in computer's brain
+        print("🧠 COMPUTER'S BRAIN CONTENTS:")
+        print(f"  - _trained_models: {list(_trained_models.keys())}")
+        print(f"  - _best_model: {type(_best_model).__name__}")
+        print(f"  - _best_model_name: '{_best_model_name}'")
+        print(f"  - _best_accuracy: {_best_accuracy:.4f}")
+        print(f"  - _l1 (symptoms): {len(_l1)} symptoms")
+        print(f"  - _disease: {len(_disease)} diseases")
+        print("--------------------------------")
+        
     else:
-        print("Using pre-trained models...")
-        print(f"Best model: {_best_model_name} (Accuracy: {_best_accuracy:.4f})")
+        print("🧠 COMPUTER'S BRAIN: Already trained! Using stored models...")
+        print(f"🏆 Best model: {_best_model_name} (Accuracy: {_best_accuracy:.4f})")
+        print("🧠 COMPUTER'S BRAIN CONTENTS (Current):")
+        print(f"  - _trained_models: {list(_trained_models.keys())}")
+        print(f"  - _best_model: {type(_best_model).__name__}")
+        print(f"  - _best_model_name: '{_best_model_name}'")
+        print(f"  - _best_accuracy: {_best_accuracy:.4f}")
+        print(f"  - _l1 (symptoms): {len(_l1)} symptoms")
+        print(f"  - _disease: {len(_disease)} diseases")
+        print("--------------------------------")
 
     # Prepare input data
+    print("🔍 PREPARING PREDICTION:")
+    print(f"  - User symptoms: '{a}', '{b}', '{c}', '{d}'")
+    
     input_data = np.zeros(len(_l1))
     for symptom in [a, b, c, d]:
         try:
-            input_data[_l1.index(symptom)] = 1
+            symptom_index = _l1.index(symptom)
+            input_data[symptom_index] = 1
+            print(f"  - '{symptom}' found at position {symptom_index}")
         except ValueError:
-            print(f"Warning: Symptom '{symptom}' not found in known symptoms list")
+            print(f"  - ⚠️ Warning: Symptom '{symptom}' not found in known symptoms list")
+
+    print(f"  - Input vector created: {len(input_data)} features")
+    print(f"  - Active symptoms: {sum(input_data)} out of {len(input_data)}")
 
     # Predict disease using the best model (with feature names to avoid sklearn warnings)
+    print("🎯 MAKING PREDICTION:")
     input_df = pd.DataFrame([input_data], columns=_l1)
     predicted_index = _best_model.predict(input_df)[0]
     predicted_disease = _disease[predicted_index]
 
-    # Log inputs and prediction
-    print("Input symptoms:", "Symptom 1:", a, "Symptom 2:", b, "Symptom 3:", c, "Symptom 4:", d)
-    print("Predicted disease:", predicted_disease)
+    print(f"  - Model predicted index: {predicted_index}")
+    print(f"  - Predicted disease: '{predicted_disease}'")
+    print(f"  - Total diseases available: {len(_disease)}")
 
     # Store prediction in database
+    print("💾 SAVING TO DATABASE:")
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS SymptomPrediction (Symptom1 TEXT, Symptom2 TEXT, Symptom3 TEXT, Symptom4 TEXT, PredictedDisease TEXT)")
     try:
         cursor.execute("INSERT INTO SymptomPrediction (Symptom1, Symptom2, Symptom3, Symptom4, PredictedDisease) VALUES (?, ?, ?, ?, ?)", (a, b, c, d, predicted_disease))
         conn.commit()
-        print("DB insert status: success")
+        print("  - ✅ Database insert: SUCCESS")
+        print(f"  - 📝 Recorded: {a}, {b}, {c}, {d} → {predicted_disease}")
     except Exception as db_err:
-        print("DB insert status: failed", db_err)
+        print(f"  - ❌ Database insert: FAILED - {db_err}")
     finally:
         conn.close()
 
-    # Log best model and its accuracy
-    print("Selected model:", _best_model_name, "Accuracy:", _best_accuracy)
+    # Final summary
+    print("🎉 PREDICTION COMPLETE!")
+    print("--------------------------------")
+    print("🧠 COMPUTER'S BRAIN STATUS:")
+    print(f"  - Models trained: {len(_trained_models) if _trained_models else 0}")
+    print(f"  - Best model: {_best_model_name}")
+    print(f"  - Best accuracy: {_best_accuracy:.4f}")
+    print(f"  - Symptoms known: {len(_l1)}")
+    print(f"  - Diseases known: {len(_disease)}")
+    print("--------------------------------")
+    print(f"🏥 FINAL RESULT: {predicted_disease}")
     print("--------------------------------")
 
     return predicted_disease
