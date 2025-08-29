@@ -1,14 +1,111 @@
-open cmd in same folder
-and run 
-python AyurHealth.py
+AyurHealth – Disease Prediction and Remedies (Flask)
 
+1) What this project is
+   AyurHealth is a small Flask web app that:
+   - Predicts a probable disease from 4 user-entered symptoms using ML
+   - Suggests Ayurvedic remedies for a selected condition from a curated CSV
+   - Provides a simple, responsive UI (Bootstrap + custom CSS)
 
-it is host in glitch hosting platform for that requirement.txt and start.sh file was been made added 
-Glitch at abinskaria2002@gmail.com
+2) How it works (high level)
+   - The Symptoms page posts four symptoms to the backend.
+   - The backend trains multiple classifiers on Training.csv (RandomForest, SVC,
+     LogisticRegression, GaussianNB), evaluates them on Testing.csv and
+     selects the model with the best accuracy for prediction.
+   - The predicted disease is displayed and also stored in a local SQLite DB.
+   - The Suggester page looks up Remedies.csv and displays the matching row.
 
-by linking https://github.com/Project-Host/AyurHealth to glitch
+3) Run locally
+   Prerequisites: Python 3.10+ recommended
 
-GitHub https://github.com/Project-Host/AyurHealth
+   a. Create/activate a virtual environment (optional but recommended)
+      python -m venv .venv
+      .venv\Scripts\activate      (Windows)
+      source .venv/bin/activate    (macOS/Linux)
 
-Link of the website
-https://ayurhealth.glitch.me
+   b. Install dependencies
+      pip install -r requirements.txt
+
+   c. Start the app (binds to http://localhost:3000)
+      python AyurHealth.py
+
+   d. Open in browser
+      http://localhost:3000
+
+4) App navigation
+   - Home      → Overview and quick links
+   - Symptoms  → Enter four symptoms (pretty labels), get ML prediction
+   - Suggester → Select a condition and view remedies from CSV
+   - About     → About page
+
+5) Important files and folders
+   - AyurHealth.py
+     Flask application entry point and routes:
+       • /           → Home
+       • /symptoms   → Symptoms page (GET)
+       • /suggester  → Suggester page (GET)
+       • /about      → About page (GET)
+       • /s1 (POST)  → Handles symptoms form, predicts disease and renders result
+       • /s2 (POST)  → Handles suggester form and renders remedies
+     The server runs on host 'localhost', port 3000 (debug=True).
+
+   - Symptom.py
+     ML workflow for disease prediction:
+       • Loads Training.csv / Testing.csv
+       • Encodes prognosis labels to integers
+       • Trains candidate models: RandomForest, SVC, LogisticRegression, GaussianNB
+       • Evaluates on Testing.csv, selects the best by accuracy
+       • Builds a feature vector from the four symptoms and predicts with the best model
+       • Logs model accuracies and chosen model
+       • Saves each prediction into SQLite (database.db → table SymptomPrediction)
+
+   - Suggester.py
+     Simple CSV lookup for remedies. Finds the row in Remedies.csv whose first cell
+     matches the chosen condition and returns the formatted content.
+
+   - templates/ (Jinja2)
+       • index.html      → Home (navbar includes Symptoms and Suggester)
+       • symptoms.html   → Symptoms form + prediction result
+       • suggester.html  → Remedies lookup + result
+       • about.html      → Static info page
+
+   - static/
+       • css/
+           project.css         → Custom styles and responsive rules
+           bootstrap.min.css   → Bootstrap
+       • js/
+           slide.js            → Home page image slideshow (only runs on Home)
+           symptoms.js         → Hides previous prediction when user edits inputs
+           suggester.js        → Page-specific JS for suggester (if any hooks)
+       • images/              → App images and icons
+
+   - CSV datasets
+       • Training.csv  → Training data with symptom columns and a prognosis column
+       • Testing.csv   → Test set used for accuracy selection
+       • Remedies.csv  → Conditions and corresponding remedy text
+
+   - database.db
+       • Local SQLite DB created at runtime; stores symptom inputs and predictions
+       • Ignored by Git via .gitignore
+
+   - requirements.txt
+       Minimal dependencies to run the app (Flask, pandas, scikit-learn). If your
+       platform needs it, install numpy/scipy as well (pip will usually resolve).
+
+   - start.sh
+       Simple one-line runner used for Glitch/hosting scenarios.
+
+   - .gitignore
+       Excludes caches, virtualenvs, databases, build outputs and editor files.
+
+7) UI details / helpful behaviors
+   - Symptoms inputs show human-friendly labels (e.g., “Back Pain”) but the backend
+     receives machine codes (e.g., back_pain) so the model works consistently.
+   - After submitting Symptoms/Suggester, the page anchors to the result box.
+   - When the user focuses/types again in Symptoms inputs, the previous result box
+     is hidden to avoid confusion.
+
+8) Notes on data and accuracy
+   - Accuracy is selected on a small Testing.csv (43 rows), so different models can
+     tie. The project logs per-model accuracies and the selected model each request.
+   - For stronger validation, consider k-fold cross-validation on Training.csv and
+     using Testing.csv strictly for a final holdout check.
