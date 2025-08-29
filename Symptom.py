@@ -1,6 +1,10 @@
 import sqlite3
 import pandas as pd
 import numpy as np
+import warnings
+
+# Suppress sklearn warnings about classification vs regression
+warnings.filterwarnings('ignore', category=UserWarning, module='sklearn')
 
 #importing the libraries for the machine learning models
 from sklearn.ensemble import RandomForestClassifier #Random Forest Classifier
@@ -75,11 +79,11 @@ def Symptoms(a, b, c, d):
         X_train = df_train[l1]
         y_train = df_train['prognosis']
 
-        # Initialize candidate models
+        # Initialize candidate models (optimized for speed)
         candidate_models = {
-            'RandomForest': RandomForestClassifier(n_estimators=200, random_state=42),
-            'SVC': SVC(kernel='rbf', probability=True, random_state=42),
-            'LogisticRegression': LogisticRegression(max_iter=1000, n_jobs=None, random_state=42),
+            'RandomForest': RandomForestClassifier(n_estimators=50, random_state=42),  # Reduced from 200
+            'SVC': SVC(kernel='linear', probability=False, random_state=42),  # Linear kernel, no probability
+            'LogisticRegression': LogisticRegression(max_iter=500, random_state=42),  # Reduced iterations
             'GaussianNB': GaussianNB()
         }
 
@@ -95,16 +99,27 @@ def Symptoms(a, b, c, d):
         best_model = None
         best_accuracy = -1.0
 
+        # For free tier, train models one by one and check if we're running out of time
         for name, model in candidate_models.items():
-            print(f"Training {name}...")
-            model.fit(X_train, y_train)
-            y_pred = model.predict(X_test)
-            acc = accuracy_score(y_test, y_pred)
-            model_name_to_accuracy[name] = acc
-            if acc > best_accuracy:
-                best_accuracy = acc
-                best_model_name = name
-                best_model = model
+            try:
+                print(f"Training {name}...")
+                model.fit(X_train, y_train)
+                y_pred = model.predict(X_test)
+                acc = accuracy_score(y_test, y_pred)
+                model_name_to_accuracy[name] = acc
+                if acc > best_accuracy:
+                    best_accuracy = acc
+                    best_model_name = name
+                    best_model = model
+                
+                # If we have a decent model, use it (don't wait for all models)
+                if best_accuracy > 0.8:  # 80% accuracy threshold
+                    print(f"Good enough model found: {best_model_name} ({best_accuracy:.4f})")
+                    break
+                    
+            except Exception as e:
+                print(f"Error training {name}: {e}")
+                continue
 
         # Store globally for reuse
         _trained_models = model_name_to_accuracy
