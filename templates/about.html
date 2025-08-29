@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ayur Health</title>
+    <!-- For favicon png -->
+    <link rel="shortcut icon" type="image/icon" href="static/images/AyurHealth.png"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/project.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
+
+    <!-- Fonts-->
+    <link href='https://fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <nav id="header-nav" class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        
+        <!-- LogoImage -->
+        <a href="{{ url_for('home')}}" class="pull-left">
+          <div id="logo-img"></div>
+        </a> 
+
+        <!-- Brand Name -->
+        <div class="navbar-brand">
+          <a href="{{ url_for('home')}}"><h1>AyurHealth</h1></a>
+        </div>
+
+        <!-- Menubar -->  
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsable-nav" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+
+      </div> <!--Closing Navbar-header-->
+
+      <!--Lists-->
+      <div id="collapsable-nav" class="collapse navbar-collapse">
+           <ul id="nav-list" class="nav navbar-nav navbar-right">
+                 
+
+                <li><a href="{{ url_for('home')}}">Home</a></li>
+                <hr class="visible-xs">
+                <li><a href="#Footer">Contact</a></li>
+                <hr class="visible-xs">
+                <li class="active"><a href="{{ url_for('about')}}">About</a></li>
+            </ul>
+      </div> <!-- Closing list -->
+
+    </div> <!-- Closing Container -->
+    </nav> 
+  </header>
+  <!-- End of Header -->
+
+  <!-- About Page -->
+  <div id="main-content" class="container">
+    <h2 id="about-title" class="text-center">About</h2>
+  </div>
+
+  <!-- Powerpoint Presentation -->
+  <div id="presentation" class="container">
+    <iframe id="powerpoint" src="https://onedrive.live.com/embed?cid=53E70C4861346343&resid=53E70C4861346343%213924&authkey=AI8YksCDWaXvWSo&em=2" frameborder="0" scrolling="no"></iframe>
+  </div>
+  <!-- End of About Page -->
+
+  <!-- Footer -->
+  <footer id="Footer" class="panel-footer" style="background-color:#006400">
+    <div class="container">
+      <div class="row">
+        <section id="Contact" class="col-sm-3">
+          <span>Contact:</span><br>
+          Phone No: +91 1234567890<br>
+          Email: xyz@gmail.com
+          <hr class="visible-xs">
+        </section>
+        <section id="Address" class="col-sm-3">
+          <span>Address:</span><br>
+          College Of Engineering Chengannur<br>
+          Chengannur, Kerala 689121
+          <hr class="visible-xs">
+        </section>
+        <section id="Team" class="col-sm-3">
+          <span>Team:</span><br>
+          Abhishek U , Abin Skaria<br>
+          Adarsh Anil , Ajas Shaffi
+          <hr class="visible-xs">
+        </section>
+        <section id="Testimonials" class="col-sm-3">
+          <p>"Ayurveda is a traditional Indian system of medicine that emphasizes the balance between mind, body, and spirit for optimal health and well-being."</p>
+        </section>
+      </div> <!-- Closing row -->
+      <div class="text-center">&copy; Copyright Team-10 2023</div>
+    </div> <!-- Closing container -->
+  </footer>
+  <!-- End of footer   -->
+
+  <!-- jQuery (Bootstrap JS plugins depend on it) -->
+  <script src="{{ url_for('static',filename='js/jquery-2.1.4.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/script.js') }}"></script>
+  
+</body>
+</html>

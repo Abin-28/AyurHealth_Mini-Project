@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ayur Health</title>
+    <!-- For favicon png -->
+    <link rel="shortcut icon" type="image/icon" href="static/images/AyurHealth.png"/>   
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/project.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
+
+    <!-- Fonts-->
+    <link href='https://fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <nav id="header-nav" class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        
+        <!-- LogoImage -->
+        <a href="{{ url_for('home')}}" class="pull-left">
+          <div id="logo-img"></div>
+        </a> 
+
+        <!-- Brand Name -->
+        <div class="navbar-brand">
+          <a href="{{ url_for('home')}}"><h1>AyurHealth</h1></a>
+        </div>
+
+        <!-- Menubar -->  
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsable-nav" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+
+      </div> <!--Closing Navbar-header-->
+
+      <!--Lists-->
+      <div id="collapsable-nav" class="collapse navbar-collapse">
+           <ul id="nav-list" class="nav navbar-nav navbar-right">
+                 
+
+                <li class="active"><a href="{{ url_for('home')}}">Home</a></li>
+                <hr class="visible-xs">
+                <li><a href="#Footer">Contact</a></li>
+                <hr class="visible-xs">
+                <li><a href="{{ url_for('about')}}">About</a></li>
+            </ul>
+      </div> <!-- Closing list -->
+
+    </div> <!-- Closing Container -->
+    </nav> 
+  </header>
+  <!-- End of Header -->
+
+  <!-- Symptom Page -->
+  <div id="main-content" class="container">
+    <h2 id="symptoms-title" class="text-center">Symptoms</h2>
+    
+    <!-- Intro -->
+    <div id="Sp">
+      <p>Welcome to our innovative symptoms prediction feature, designed to bring you peace of mind and valuable insights into your health. With just a few clicks, you can input your symptoms and let our advanced algorithm do the rest, to provide you with personalized predictions about potential health conditions.</p>
+    </div>
+
+    <!-- List of Symptoms for input box -->
+    <datalist id="scripts">
+      <option value="back_pain"><option value="constipation"><option value="abdominal_pain">
+      <option value="diarrhoea"><option value="mild_fever"><option value="yellow_urine">
+      <option value="yellowing_of_eyes"><option value="acute_liver_failure"><option value="fluid_overload">
+      <option value="swelling_of_stomach"><option value="swelled_lymph_nodes"><option value="malaise">
+      <option value="blurred_and_distorted_vision"><option value="phlegm"><option value="throat_irritation">
+      <option value="redness_of_eyes"><option value="sinus_pressure"><option value="runny_nose">
+      <option value="congestion"><option value="chest_pain"><option value="weakness_in_limbs">
+      <option value="fast_heart_rate"><option value="pain_during_bowel_movements"><option value="pain_in_anal_region">
+      <option value="bloody_stool"><option value="irritation_in_anus"><option value="neck_pain">
+      <option value="dizziness"><option value="cramps"><option value="bruising">
+      <option value="obesity"><option value="swollen_legs"><option value="swollen_blood_vessels">
+      <option value="puffy_face_and_eyes"><option value="enlarged_thyroid"><option value="brittle_nails">
+      <option value="swollen_extremeties"><option value="excessive_hunger"><option value="extra_marital_contacts">
+      <option value="drying_and_tingling_lips"><option value="slurred_speech"><option value="knee_pain">
+      <option value="hip_joint_pain"><option value="muscle_weakness"><option value="stiff_neck">
+      <option value="swelling_joints"><option value="spinning_movements"><option value="loss_of_balance">
+      <option value="movement_stiffness"><option value="weakness_of_one_body_side"><option value="loss_of_smell">
+      <option value="unsteadiness"><option value="bladder_discomfort"><option value="foul_smell_of urine">
+      <option value="continuous_feel_of_urine"><option value="passage_of_gases"><option value="internal_itching">
+      <option value="toxic_look_(typhos)"><option value="depression"><option value="irritability">
+      <option value="muscle_pain"><option value="altered_sensorium"><option value="red_spots_over_body">
+      <option value="belly_pain"><option value="abnormal_menstruation"><option value="dischromic_patches">
+      <option value="watering_from_eyes"><option value="increased_appetite"><option value="polyuria">
+      <option value="family_history"><option value="mucoid_sputum"><option value="rusty_sputum">
+      <option value="lack_of_concentration"><option value="visual_disturbances"><option value="receiving_blood_transfusion">
+      <option value="receiving_unsterile_injections"><option value="coma"><option value="stomach_bleeding">
+      <option value="distention_of_abdomen"><option value="history_of_alcohol_consumption">
+      <option value="blood_in_sputum"><option value="prominent_veins_on_calf"><option value="palpitations">
+      <option value="painful_walking"><option value="pus_filled_pimples"><option value="blackheads">
+      <option value="scurring"><option value="skin_peeling"><option value="silver_like_dusting">
+      <option value="small_dents_in_nails"><option value="inflammatory_nails"><option value="blister">              
+      <option value="red_sore_around_nose"><option value="yellow_crust_ooze">
+    </datalist>
+
+
+    <!-- Symptoms -->
+    <form action="{{ url_for('s1')}}" method="post">
+    <div id="sfill">
+      <div  for = "snum" class="inputBox">
+        <input list="scripts" type = 'text' id = 'fnam', name = 'fn section', required = 'required'>
+        <span>First Symptom</span>
+      </div>
+
+      <div for = "snum" class="inputBox">
+        <input list="scripts" type = 'text' id = 'snam', name = 'sn section', required = 'required'>
+        <span>Second Symptom</span>
+      </div>
+
+      <div for = "snum" class="inputBox">
+        <input list="scripts" type = 'text' id = 'tnam', name = 'tn section', required = 'required'>
+        <span>Third Symptom</span>
+      </div>
+
+      <div for = "snum" class="inputBox">
+        <input list="scripts" type = 'text' id = 'fonam', name = 'fon section', required = 'required'>
+        <span>Fourth Symptom</span>
+      </div>
+    </div>
+    
+    <!-- Submit -->
+    <div id="sub" >
+      <div for = "snum" class="input">
+        <input id="submit" type="submit" value="Predict" ></input>
+      </div>
+    </div>
+
+    </form>
+    <br></br>
+
+    <!-- Result -->
+    <div id="result" class="container">
+      <h3>{{results}}</h3>
+    </div>
+  </div>
+  <!-- End of Symptom Page -->
+
+  <!-- Footer -->
+  <footer id="Footer" class="panel-footer" style="background-color:#006400">
+    <div class="container">
+      <div class="row">
+        <section id="Contact" class="col-sm-3">
+          <span>Contact:</span><br>
+          Phone No: +91 1234567890<br>
+          Email: xyz@gmail.com
+          <hr class="visible-xs">
+        </section>
+        <section id="Address" class="col-sm-3">
+          <span>Address:</span><br>
+          College Of Engineering Chengannur<br>
+          Chengannur, Kerala 689121
+          <hr class="visible-xs">
+        </section>
+        <section id="Team" class="col-sm-3">
+          <span>Team:</span><br>
+          Abhishek U , Abin Skaria<br>
+          Adarsh Anil , Ajas Shaffi
+          <hr class="visible-xs">
+        </section>
+        <section id="Testimonials" class="col-sm-3">
+          <p>"Ayurveda is a traditional Indian system of medicine that emphasizes the balance between mind, body, and spirit for optimal health and well-being."</p>
+        </section>
+      </div> <!-- Closing row -->
+      <div class="text-center">&copy; Copyright Team-10 2023</div>
+    </div> <!-- Closing container -->
+  </footer>
+  <!-- End of footer   -->
+
+  <!-- jQuery (Bootstrap JS plugins depend on it) -->
+  <script src="{{ url_for('static',filename='js/jquery-2.1.4.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/script.js') }}"></script>
+  
+</body>
+</html>
