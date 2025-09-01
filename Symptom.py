@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 import numpy as np
 import warnings
+import time
 
 # Suppress sklearn warnings about classification vs regression
 warnings.filterwarnings('ignore', category=UserWarning, module='sklearn')
@@ -22,6 +23,20 @@ _best_model_name = None
 _best_accuracy = None
 _l1 = None
 _disease = None
+
+# Progress callback function (will be set by Flask app)
+_progress_callback = None
+
+def update_progress(progress, message=""):
+    """Update progress if callback is available"""
+    if _progress_callback:
+        _progress_callback(progress, message)
+    # Also print for console logging
+    print(f"📊 Progress: {progress}% - {message}")
+
+def is_first_time():
+    """Check if models need to be trained for the first time"""
+    return _trained_models is None
 
 def Symptoms(a, b, c, d):
     global _trained_models, _best_model, _best_model_name, _best_accuracy, _l1, _disease
@@ -105,11 +120,29 @@ def Symptoms(a, b, c, d):
         best_accuracy = -1.0
 
         print("🚀 Starting model training...")
-        # For free tier, train models one by one and check if we're running out of time
-        for name, model in candidate_models.items():
+        
+        # Calculate progress steps based on number of models
+        total_models = len(candidate_models)
+        progress_per_model = 80 / total_models  # 80% for training, 20% for setup/completion
+        
+        # Initial setup progress
+        update_progress(10, "Loading training data...")
+        time.sleep(0.5)  # Small delay for UI update
+        
+        # Train models one by one
+        for i, (name, model) in enumerate(candidate_models.items()):
             try:
+                # Calculate current progress
+                current_progress = 10 + (i * progress_per_model)
+                update_progress(int(current_progress), f"Training {name}...")
+                
                 print(f"🎯 Training {name}...")
                 model.fit(X_train, y_train)
+                
+                # Update progress during training
+                training_progress = current_progress + (progress_per_model / 2)
+                update_progress(int(training_progress), f"Training {name}...")
+                
                 y_pred = model.predict(X_test)
                 acc = accuracy_score(y_test, y_pred)
                 model_name_to_accuracy[name] = acc
@@ -118,15 +151,18 @@ def Symptoms(a, b, c, d):
                     best_model_name = name
                     best_model = model
                 
+                # Update progress after training
+                final_progress = current_progress + progress_per_model
+                update_progress(int(final_progress), f"Training {name}...")
+                
                 print(f"✅ {name} trained! Accuracy: {acc:.4f}")
                 
-                # Train all models to see which is best (remove early stopping)
-                # if best_accuracy > 0.8:  # 80% accuracy threshold
-                #     print(f"🎉 Good enough model found: {best_model_name} ({best_accuracy:.4f})")
-                #     break
+                # Small delay for UI update
+                time.sleep(0.3)
                     
             except Exception as e:
                 print(f"❌ Error training {name}: {e}")
+                update_progress(int(current_progress), f"Training {name}...")
                 continue
 
         # Store globally for reuse
@@ -134,6 +170,11 @@ def Symptoms(a, b, c, d):
         _best_model = best_model
         _best_model_name = best_model_name
         _best_accuracy = best_accuracy
+        
+        # Final completion progress
+        update_progress(95, "Training complete! Selecting best model...")
+        time.sleep(0.5)
+        update_progress(100, "Training complete! Making prediction...")
         
         print("🧠 COMPUTER'S BRAIN: Models stored successfully!")
         print("--------------------------------")

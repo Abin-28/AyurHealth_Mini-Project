@@ -62,6 +62,18 @@
     </nav> 
   </header>
   <!-- End of Header -->
+  
+  <!-- First Time Notice - Sticky Header (Show immediately when models not trained) -->
+  {% if is_first_time %}
+  <div id="first-time-notice" class="sticky-notice">
+    <div class="alert alert-warning">
+      <div class="container">
+        <p><b>⚠️ First Time Training Models:</b> This is your first prediction! Our Machine Learning models need to be trained, which may take 10-30 seconds. 
+           Subsequent predictions will be instant.</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
   <!-- Symptom Page -->
   <div id="main-content" class="container">
@@ -142,6 +154,19 @@
 
     </form>
     <br></br>
+
+    <!-- Training Progress Bar - Only show during training -->
+    <div id="training-progress" class="container" style="display: none;">
+      <div class="alert alert-info">
+        <h4>🤖 Machine Learning Models Training in Progress...</h4>
+        <div class="progress">
+          <div id="training-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
+               role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <span id="training-text">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Result -->
     {% if results %}

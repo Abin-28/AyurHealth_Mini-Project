@@ -447,6 +447,44 @@
 
   /*** End of Commonn to Symptom Page and Suggester Page ***/
 
+  /*** Training Progress Styles ***/
+  #training-progress {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  #training-progress .alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  #training-progress .progress {
+    height: 25px;
+    border-radius: 15px;
+    margin: 15px 0;
+  }
+
+  #training-bar {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .alert-warning {
+    margin-top: -15px;
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+  }
+
+  .alert-warning h4 {
+    color: #856404;
+    margin-bottom: 10px;
+  }
+
+  /*** End of Training Progress Styles ***/
 
   /*** About page ***/  
   /* Powerpoint presentation */

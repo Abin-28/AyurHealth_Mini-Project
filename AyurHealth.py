@@ -17,7 +17,8 @@ def home():
 # Linking Symptom Page
 @app.route('/symptoms')
 def symptoms():
-    return render_template('symptoms.html')
+    is_first_time = Symptom.is_first_time()
+    return render_template('symptoms.html', is_first_time=is_first_time)
 
 # Linking Suggester Page
 @app.route('/suggester')
@@ -40,12 +41,17 @@ def s1():
 		b = str(request.form['sn section'])
 		c = str(request.form['tn section'])       
 		d = str(request.form['fon section'])
+		
+		# Check if this is first time (models need training)
+		is_first_time = Symptom.is_first_time()
+		
 		# Calling Symptoms() from Symptom
 		Sym = Symptom.Symptoms(a,b,c,d)
 
-
 		# Displaying Input
-		return render_template('symptoms.html', results = "Predicted Disease :: {}".format(Sym))
+		return render_template('symptoms.html', 
+							 results = "Predicted Disease :: {}".format(Sym),
+							 is_first_time = is_first_time)
 	
 	else:
 		return render_template('symptoms.html')
