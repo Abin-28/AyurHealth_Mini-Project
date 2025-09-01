@@ -159,6 +159,11 @@ def Symptoms(a, b, c, d):
                 
                 # Small delay for UI update
                 time.sleep(0.3)
+                
+                # Train all models to see which is best (remove early stopping)
+                if best_accuracy > 0.8:  # 80% accuracy threshold
+                    print(f"🎉 Good enough model found: {best_model_name} ({best_accuracy:.4f})")
+                    break
                     
             except Exception as e:
                 print(f"❌ Error training {name}: {e}")
