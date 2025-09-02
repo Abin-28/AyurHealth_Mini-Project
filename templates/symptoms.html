@@ -63,8 +63,8 @@
   </header>
   <!-- End of Header -->
   
-  <!-- First Time Notice - Sticky Header (Show immediately when models not trained) -->
-  {% if is_first_time %}
+  <!-- First Time Notice - Sticky (below header) shown only during first training before results -->
+  {% if is_first_time and not results %}
   <div id="first-time-notice" class="sticky-notice">
     <div class="alert alert-warning">
       <div class="container">
@@ -122,7 +122,7 @@
 
 
     <!-- Symptoms -->
-    <form action="{{ url_for('s1')}}#result" method="post">
+    <form action="{{ url_for('s1')}}#result" method="post" data-first-time="{{ 'true' if is_first_time else 'false' }}">
     <div id="sfill">
       <div  for = "snum" class="inputBox">
         <input list="scripts" type = 'text' id = 'fnam', name = 'fn section', required = 'required'>

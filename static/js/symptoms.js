@@ -22,16 +22,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const trainingText = document.getElementById('training-text');
     const firstTimeNotice = document.getElementById('first-time-notice');
     const resultBox = document.getElementById('result');
+    const isFirstTimeFlag = form ? (form.getAttribute('data-first-time') === 'true') : false;
+    const alreadyTrained = sessionStorage.getItem('ah_trained') === 'true';
+
+    // If we've already trained once in this browser session, make sure the notice is hidden
+    if (alreadyTrained && firstTimeNotice) {
+        firstTimeNotice.style.display = 'none';
+    }
 
     if (form) {
         form.addEventListener('submit', function(e) {
-            // Hide first time notice when predict button is clicked
-            if (firstTimeNotice) {
+            // Only for the very first training attempt
+            const shouldShowFirstTimeUI = isFirstTimeFlag && !alreadyTrained;
+
+            // Hide first time notice when predict button is clicked (only first time)
+            if (shouldShowFirstTimeUI && firstTimeNotice) {
                 firstTimeNotice.style.display = 'none';
             }
             
-            // Show training progress bar
-            if (trainingProgress) {
+            // Show training progress bar only on very first training
+            if (shouldShowFirstTimeUI && trainingProgress) {
                 trainingProgress.style.display = 'block';
                 trainingBar.style.width = '0%';
                 trainingText.textContent = '0%';
@@ -42,8 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultBox.style.display = 'none';
             }
 
-            // Start progress animation (simulated for now)
-            simulateProgress();
+            // Start progress animation only for first training
+            if (shouldShowFirstTimeUI) {
+                simulateProgress();
+                // Mark as trained so future submits won't show first-time UI
+                try { sessionStorage.setItem('ah_trained', 'true'); } catch (err) {}
+            }
         });
     }
 

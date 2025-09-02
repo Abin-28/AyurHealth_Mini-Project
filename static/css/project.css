@@ -447,6 +447,22 @@
 
   /*** End of Commonn to Symptom Page and Suggester Page ***/
 
+  /*** Sticky Notice Styles (below header, sticks on scroll) ***/
+  .sticky-notice {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .sticky-notice .alert {
+    margin: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  /*** End Sticky Notice Styles ***/
+
   /*** Training Progress Styles ***/
   #training-progress {
     margin-top: 20px;
